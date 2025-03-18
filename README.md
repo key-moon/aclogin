@@ -32,13 +32,15 @@ REVEL_SESSIONクッキーはhttpOnly属性が設定されているため、JavaS
 
 開発者ツールの上部メニューから「Application」タブをクリックします。（Firefoxの場合は「Storage」タブ）
 
-左側のサイドバーから「Cookies」→「https://atcoder.jp」を選択します。
+左側のサイドバーから「Cookies」→「https://atcoder.jp 」を選択します。
 
 #### Step 3: REVEL_SESSIONの値をコピー
 
 クッキーの一覧から「REVEL_SESSION」という名前の行を探します。
 
-「Value」列の値をダブルクリックして選択し、右クリックしてコピーするか、Ctrl+C（MacならCmd+C）でコピーします。
+「Value」列の値を**ダブルクリック**して選択し、右クリックしてコピーするか、Ctrl+C（MacならCmd+C）でコピーします。
+
+![](/img/session_location.png)
 
 ### 3. CLIツールでクッキーを保存
 

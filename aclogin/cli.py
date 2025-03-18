@@ -184,7 +184,11 @@ def main():
     if not tools:
         print("エラー: 対応するツールがインストールされていません")
         sys.exit(1)
-    
+
+    print("検知されたツール:")
+    for tool in tools:
+        print(f"- {tool.name}")
+
     # ツール固有のオプションを適用
     for i, tool in enumerate(tools):
         if isinstance(tool, OJTool) and args.oj_cookie_path:
