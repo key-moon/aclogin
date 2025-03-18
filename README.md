@@ -10,26 +10,45 @@ AtCoderでは、CAPTCHAの導入によりコマンドラインツールからの
 
 ## インストール方法
 
-### 1. Tampermonkeyスクリプトのインストール
-
-1. [Tampermonkey](https://www.tampermonkey.net/)をブラウザにインストール
-2. [atcoder_cookie_exporter.user.js](https://github.com/key-moon/aclogin/raw/main/atcoder_cookie_exporter.user.js)をインストール
-
-### 2. CLIツールのインストール
-
 ```bash
 pip install aclogin
 ```
 
 ## 使い方
 
-1. ブラウザでAtCoderにログイン
-2. ページ右下に表示される「REVEL_SESSIONをコピー」ボタンをクリック
-3. ターミナルで以下のコマンドを実行
-   ```bash
-   aclogin
-   ```
-4. プロンプトが表示されたら、クリップボードからクッキーを貼り付け（Ctrl+V）
+### 1. AtCoderにログイン
+
+ブラウザでAtCoderにログインします。
+
+### 2. REVEL_SESSIONクッキーを取得
+
+REVEL_SESSIONクッキーはhttpOnly属性が設定されているため、JavaScriptから直接取得できません。以下の手順で手動で取得してください。
+
+#### Step 1: 開発者ツールを開く
+
+キーボードで **F12** キーを押すか、右クリックして「検証」または「Inspect」を選択します。
+
+#### Step 2: Application/Storageタブを開く
+
+開発者ツールの上部メニューから「Application」タブをクリックします。（Firefoxの場合は「Storage」タブ）
+
+左側のサイドバーから「Cookies」→「https://atcoder.jp」を選択します。
+
+#### Step 3: REVEL_SESSIONの値をコピー
+
+クッキーの一覧から「REVEL_SESSION」という名前の行を探します。
+
+「Value」列の値をダブルクリックして選択し、右クリックしてコピーするか、Ctrl+C（MacならCmd+C）でコピーします。
+
+### 3. CLIツールでクッキーを保存
+
+ターミナルで以下のコマンドを実行します。
+
+```bash
+aclogin
+```
+
+プロンプトが表示されたら、コピーしたREVEL_SESSIONクッキーの値を貼り付けます（Ctrl+V）。
 
 ## オプション
 
