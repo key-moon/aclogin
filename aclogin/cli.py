@@ -136,8 +136,8 @@ class AccTool(ToolBase):
     @staticmethod
     def default_cookie_path() -> pathlib.Path:
         """デフォルトのクッキーパスを返す"""
-        home_dir = pathlib.Path.home()
-        return home_dir / '.config' / 'atcoder-cli-nodejs' / 'session.json'
+        config_dir = pathlib.Path(subprocess.check_output(["acc", "config-dir"], text=True).strip())
+        return config_dir / 'session.json'
     
     def store_session(self, cookie_value: str) -> bool:
         """
