@@ -55,7 +55,7 @@ aclogin
 ## オプション
 
 ```
-usage: aclogin [-h] [--tools TOOLS [TOOLS ...]] [--oj-cookie-path OJ_COOKIE_PATH]
+usage: aclogin [-h] [--tools TOOLS [TOOLS ...]] [--oj-cookie-path OJ_COOKIE_PATH] [--acc-cookie-path ACC_COOKIE_PATH]
 
 AtCoder の REVEL_SESSION クッキーを各種ツールに保存します
 
@@ -65,6 +65,8 @@ optional arguments:
                         クッキーを保存するツール名（指定なしの場合は自動検出）
   --oj-cookie-path OJ_COOKIE_PATH
                         oj のクッキーファイルのパス
+  --acc-cookie-path ACC_COOKIE_PATH
+                        acc のセッションファイルのパス
 ```
 
 ## 対応ツール
@@ -72,6 +74,7 @@ optional arguments:
 現在、以下のツールに対応しています：
 
 - [online-judge-tools (oj)](https://github.com/online-judge-tools/oj)
+- [atcoder-cli (acc)](https://github.com/Tatamo/atcoder-cli)
 
 ## ライセンス
 

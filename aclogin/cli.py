@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import pathlib
 import subprocess
 import sys
@@ -124,14 +125,77 @@ class OJTool(ToolBase):
             return False
 
 
-# 将来的に他のツールを追加する場合はここに実装
-# class MarapiTool(ToolBase):
-#     name = "marapi"
-#     ...
+class AccTool(ToolBase):
+    """atcoder-cli 用のツールクラス"""
+    
+    name = "acc"
+    
+    def __init__(self, cookie_path: Optional[pathlib.Path] = None):
+        self.cookie_path = cookie_path or self.default_cookie_path()
+    
+    @staticmethod
+    def default_cookie_path() -> pathlib.Path:
+        """デフォルトのクッキーパスを返す"""
+        home_dir = pathlib.Path.home()
+        return home_dir / '.config' / 'atcoder-cli-nodejs' / 'session.json'
+    
+    def store_session(self, cookie_value: str) -> bool:
+        """
+        REVEL_SESSION クッキーを acc の session.json に保存する
+        
+        Args:
+            cookie_value: REVEL_SESSION クッキーの値
+            
+        Returns:
+            bool: 保存に成功したかどうか
+        """
+        try:
+            # 親ディレクトリが存在しない場合は作成
+            self.cookie_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # 既存のJSONファイルがあれば読み込む
+            session_data = {
+                "cookies": [
+                    "REVEL_FLASH=",
+                    f"REVEL_SESSION={cookie_value}"
+                ]
+            }
+            
+            if self.cookie_path.exists():
+                try:
+                    with open(self.cookie_path, 'r') as f:
+                        session_data = json.load(f)
+                        
+                    # REVEL_SESSIONを更新
+                    for i, cookie in enumerate(session_data.get("cookies", [])):
+                        if cookie.startswith("REVEL_SESSION="):
+                            session_data["cookies"][i] = f"REVEL_SESSION={cookie_value}"
+                            break
+                    else:
+                        # REVEL_SESSIONが見つからなかった場合は追加
+                        session_data.setdefault("cookies", []).append(f"REVEL_SESSION={cookie_value}")
+                        
+                        # REVEL_FLASHがなければ追加
+                        if not any(c.startswith("REVEL_FLASH=") for c in session_data.get("cookies", [])):
+                            session_data.setdefault("cookies", []).insert(0, "REVEL_FLASH=")
+                except Exception:
+                    # 読み込みに失敗した場合は新規作成
+                    pass
+            
+            # JSONファイルに保存
+            with open(self.cookie_path, 'w') as f:
+                json.dump(session_data, f, indent=4)
+            
+            print(f"✅ {self.name}: クッキーを {self.cookie_path} に保存しました")
+            return True
+            
+        except Exception as e:
+            print(f"❌ {self.name}: クッキーの保存に失敗しました: {e}")
+            return False
 
 
 # 利用可能なツールのリスト
-AVAILABLE_TOOLS = [OJTool]
+AVAILABLE_TOOLS = [OJTool, AccTool]
 
 
 def get_installed_tools(specified_tools: Optional[List[str]] = None) -> List[ToolBase]:
@@ -175,6 +239,7 @@ def main():
     
     # ツール固有のオプションを追加
     parser.add_argument('--oj-cookie-path', type=str, help='oj のクッキーファイルのパス')
+    parser.add_argument('--acc-cookie-path', type=str, help='acc のセッションファイルのパス')
     
     args = parser.parse_args()
     
@@ -193,6 +258,8 @@ def main():
     for i, tool in enumerate(tools):
         if isinstance(tool, OJTool) and args.oj_cookie_path:
             tools[i] = OJTool(pathlib.Path(args.oj_cookie_path))
+        elif isinstance(tool, AccTool) and args.acc_cookie_path:
+            tools[i] = AccTool(pathlib.Path(args.acc_cookie_path))
     
     # ユーザーにクッキーの入力を促す
     print("AtCoder の REVEL_SESSION クッキーを貼り付けてください:")
