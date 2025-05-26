@@ -27,9 +27,12 @@ class ToolBase(ABC):
     @classmethod
     def tool_exists(cls) -> bool:
         """ツールがシステムに存在するかを確認する"""
+        command_args: List[str] = ["which", cls.name]
+        if sys.platform == 'win32':
+            command_args = ["where.exe", cls.name]
         try:
             result = subprocess.run(
-                ["which", cls.name], 
+                command_args, 
                 stdout=subprocess.PIPE, 
                 stderr=subprocess.PIPE,
                 text=True,
@@ -136,7 +139,10 @@ class AccTool(ToolBase):
     @staticmethod
     def default_cookie_path() -> pathlib.Path:
         """デフォルトのクッキーパスを返す"""
-        config_dir = pathlib.Path(subprocess.check_output(["acc", "config-dir"], text=True).strip())
+        if sys.platform == 'win32':
+            config_dir = pathlib.Path(subprocess.check_output(["acc", "config-dir"], shell=True, text=True).strip())
+        else:
+            config_dir = pathlib.Path(subprocess.check_output(["acc", "config-dir"], text=True).strip())
         return config_dir / 'session.json'
     
     def store_session(self, cookie_value: str) -> bool:
